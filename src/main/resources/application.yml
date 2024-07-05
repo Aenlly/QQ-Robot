@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: QQ-Robot
+  profiles:
+    active: dev
+QQ:
+  account:
+    qq: 0
+    password: ''
