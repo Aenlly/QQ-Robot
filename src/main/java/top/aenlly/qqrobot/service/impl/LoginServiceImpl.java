@@ -1,11 +1,14 @@
 package top.aenlly.qqrobot.service.impl;
 
+import lombok.SneakyThrows;
 import net.mamoe.mirai.Bot;
+import net.mamoe.mirai.BotFactory;
+import net.mamoe.mirai.utils.BotConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import top.aenlly.qqrobot.listener.GroupListener;
+import top.aenlly.qqrobot.properties.AccountProperties;
 import top.aenlly.qqrobot.service.LoginService;
-
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 /**
  * @author Aenlly||tnw
@@ -14,14 +17,25 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
  */
 @Service
 public class LoginServiceImpl implements LoginService {
-
     @Autowired
-    private Bot bot;
+    private AccountProperties accountProperties;
+    @Autowired
+    private GroupListener listener;
 
-    ScheduledThreadPoolExecutor taskExecutor = new ScheduledThreadPoolExecutor(1);
-
+    @SneakyThrows
     @Override
     public void login() {
-        bot.login();
+        Bot bot = BotFactory.INSTANCE.newBot(accountProperties.getQq(), accountProperties.getPassword());
+        bot.getConfiguration().setProtocol(BotConfiguration.MiraiProtocol.ANDROID_PAD);
+        bot.getEventChannel().registerListenerHost(listener);
+        // 获取最新版本协议
+        new Thread("bot.login") {
+            @Override
+            public void run() {
+                bot.login();
+                while (true) {
+                }
+            }
+        }.start();
     }
 }

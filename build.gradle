@@ -35,8 +35,11 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.9.10'
 
+    implementation files('libs/fix-protocol-version-1.13.0.mirai2.jar')
+    implementation 'org.asynchttpclient:async-http-client:3.0.0.Beta2'
+
     // 机器人所需
-    api(platform("net.mamoe:mirai-bom:2.9.1")) //统一管理mirai版本
+    api(platform("net.mamoe:mirai-bom:2.16.0")) //统一管理mirai版本
     api("net.mamoe:mirai-core-api")     // 编译代码使用
     runtimeOnly("net.mamoe:mirai-core") // 运行时使用
 }

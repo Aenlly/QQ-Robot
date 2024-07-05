@@ -1,13 +1,14 @@
 package top.aenlly.qqrobot.bot;
 
-import net.mamoe.mirai.Bot;
-import net.mamoe.mirai.BotFactory;
+import lombok.SneakyThrows;
 import net.mamoe.mirai.event.GlobalEventChannel;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import net.mamoe.mirai.utils.BotConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.ResourceUtils;
 import top.aenlly.qqrobot.listener.GroupListener;
-import top.aenlly.qqrobot.properties.AccountProperties;
+import xyz.cssxsh.mirai.tool.FixProtocolVersion;
+
 
 /**
  * @author Aenlly||tnw
@@ -18,20 +19,14 @@ import top.aenlly.qqrobot.properties.AccountProperties;
 public class BotAutoConfiguration {
 
     @Bean
-    @ConditionalOnMissingBean(Bot.class)
-    public Bot bot(AccountProperties accountProperties, GroupListener listener) {
-        Bot bot = BotFactory.INSTANCE.newBot(accountProperties.getQq(), accountProperties.getPassword());
-        bot.getEventChannel().registerListenerHost(listener);
-        return bot;
-    }
-
-    @Bean
     public GroupListener groupListener() {
         return new GroupListener();
     }
 
+    @SneakyThrows
     @Bean
     public GlobalEventChannel configure(GroupListener listener) {
+        FixProtocolVersion.load(BotConfiguration.MiraiProtocol.ANDROID_PAD, ResourceUtils.getFile("classpath:config/9.0.56.json"));
         GlobalEventChannel instance = GlobalEventChannel.INSTANCE;
         instance.registerListenerHost(listener);
         return instance;
