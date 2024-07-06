@@ -15,6 +15,8 @@ import java.util.stream.Collectors;
  */
 @Service
 public class BotServiceImpl implements BotService {
+
+
     @Override
     public List<Long> getBotList() {
         List<Bot> instances = Bot.getInstances();

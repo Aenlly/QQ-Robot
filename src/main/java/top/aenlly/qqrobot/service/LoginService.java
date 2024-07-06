@@ -8,5 +8,5 @@ package top.aenlly.qqrobot.service;
 
 public interface LoginService {
 
-    void login();
+    void login(Long qq);
 }

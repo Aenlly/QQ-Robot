@@ -1,9 +1,28 @@
 spring:
   application:
     name: QQ-Robot
+
   profiles:
     active: dev
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql://localhost:3357/robot
+
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+
 QQ:
   account:
     qq: 0
     password: ''
+
+mybatis-plus:
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl # 输出日志
+    default-enum-type-handler: org.apache.ibatis.type.EnumTypeHandler
+  type-aliases-package: top.aenlly.qqrobot.entity
+debug: true

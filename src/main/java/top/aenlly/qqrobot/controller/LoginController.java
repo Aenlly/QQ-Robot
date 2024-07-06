@@ -19,7 +19,7 @@ public class LoginController {
     private LoginService loginService;
 
     @GetMapping("/login")
-    public void login() {
-        loginService.login();
+    public void login(Long qq) {
+        loginService.login(qq);
     }
 }

@@ -15,8 +15,7 @@
     "type": "TLV544Provider"
   },
   "9.0.56": {
-    "base_url": "http://qsign-v3.trpgbot.com",
-    "type": "fuqiuluo/unidbg-fetch-qsign",
-    "key": "selfshare"
+    "base_url": "https://qsign.trpgbot.com",
+    "type": "fuqiuluo/unidbg-fetch-qsign"
   }
 }
