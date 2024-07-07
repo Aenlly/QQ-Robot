@@ -1,23 +1,18 @@
 package top.aenlly.qqrobot.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
-import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.apache.ibatis.type.EnumTypeHandler;
 import top.aenlly.qqrobot.enmus.MatchTypeEnum;
 import top.aenlly.qqrobot.enmus.OptTypeEnum;
 import top.aenlly.qqrobot.enmus.StatusEnum;
-
-import java.io.Serializable;
 
 @Data
 @Builder
 @EqualsAndHashCode(callSuper = true)
 @TableName(value = "bot_group",autoResultMap = true)
-public class GroupDO extends BaseDO {
+public class BotGroupEntity extends BaseEntity {
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
@@ -57,11 +52,17 @@ public class GroupDO extends BaseDO {
      */
     @TableField("`status`")
     private StatusEnum status;
+
+    /**
+     * 命令
+     */
+    @TableField("`command`")
+    private String command;
+
     /**
      * 是否忽略大小写
      */
     @TableField("ignore_case")
     private boolean ignoreCase;
-
 
 }

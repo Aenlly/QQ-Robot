@@ -1,22 +1,17 @@
 package top.aenlly.qqrobot.adapter.command;
 
-import net.mamoe.mirai.event.events.MessageEvent;
-import net.mamoe.mirai.message.data.SingleMessage;
-import top.aenlly.qqrobot.adapter.Command;
+import org.springframework.stereotype.Component;
 import top.aenlly.qqrobot.enmus.CommandEnum;
-import top.aenlly.qqrobot.utils.MessageUtils;
 
-import java.util.List;
-
-public class Default implements Command {
+@Component
+public class Default extends AbstractCommand {
     @Override
     public String getName() {
-        return CommandEnum.HELP.name();
+        return CommandEnum.DEFAULT.name();
     }
 
     @Override
-    public void execute(MessageEvent event) {
-        List<SingleMessage> plainText = MessageUtils.getPlainText(event);
-        plainText.remove(0);
+    protected void after() {
+
     }
 }

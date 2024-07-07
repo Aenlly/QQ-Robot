@@ -1,8 +1,5 @@
 package top.aenlly.qqrobot.utils;
 
-import cn.hutool.crypto.SmUtil;
-import cn.hutool.crypto.asymmetric.RSA;
-import cn.hutool.crypto.symmetric.SM4;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
@@ -11,9 +8,7 @@ import net.mamoe.mirai.BotFactory;
 import net.mamoe.mirai.utils.BotConfiguration;
 import org.apache.commons.io.FileUtils;
 import org.springframework.util.ResourceUtils;
-import top.aenlly.qqrobot.entity.SysBotDO;
-import top.aenlly.qqrobot.listener.BotListener;
-import top.aenlly.qqrobot.properties.QQProperties;
+import top.aenlly.qqrobot.entity.SysBotEntity;
 import xyz.cssxsh.mirai.tool.FixProtocolVersion;
 
 import java.io.File;
@@ -27,7 +22,7 @@ public class BotUtils {
      * @return
      */
     @SneakyThrows
-    public static Bot defaultBot(SysBotDO sysBotDO) {
+    public static Bot defaultBot(SysBotEntity sysBotDO) {
         FixProtocolVersion.load(BotConfiguration.MiraiProtocol.ANDROID_PAD, ResourceUtils.getFile("classpath:config/9.0.56.json"));
 
         Bot bot = BotFactory.INSTANCE.newBot(sysBotDO.getQq(), sysBotDO.getPassword());

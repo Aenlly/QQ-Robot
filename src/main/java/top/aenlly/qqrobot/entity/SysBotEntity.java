@@ -7,15 +7,13 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import top.aenlly.qqrobot.enmus.MatchTypeEnum;
-import top.aenlly.qqrobot.enmus.OptTypeEnum;
 import top.aenlly.qqrobot.enmus.StatusEnum;
 
 @Data
 @Builder
 @EqualsAndHashCode(callSuper = true)
 @TableName(value = "sys_bot",autoResultMap = true)
-public class SysBotDO extends BaseDO {
+public class SysBotEntity extends BaseEntity {
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 

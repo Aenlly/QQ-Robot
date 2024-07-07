@@ -11,7 +11,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
-public class BaseDO implements Serializable {
+public class BaseEntity implements Serializable {
 
     /**
      * 创建时间

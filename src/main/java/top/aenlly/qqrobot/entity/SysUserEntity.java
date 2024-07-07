@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Builder
 @EqualsAndHashCode(callSuper = true)
 @TableName(value = "sys_user",autoResultMap = true)
-public class SysUserDO extends BaseDO {
+public class SysUserEntity extends BaseEntity {
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 

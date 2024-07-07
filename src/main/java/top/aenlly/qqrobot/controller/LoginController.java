@@ -3,6 +3,7 @@ package top.aenlly.qqrobot.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import top.aenlly.qqrobot.service.LoginService;
 
@@ -19,7 +20,7 @@ public class LoginController {
     private LoginService loginService;
 
     @GetMapping("/login")
-    public void login(Long qq) {
+    public void login(@RequestParam("qq") Long qq) {
         loginService.login(qq);
     }
 }

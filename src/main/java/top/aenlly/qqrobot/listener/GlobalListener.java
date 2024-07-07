@@ -1,15 +1,12 @@
 package top.aenlly.qqrobot.listener;
 
 import kotlin.coroutines.CoroutineContext;
-import lombok.AllArgsConstructor;
 import net.mamoe.mirai.event.EventHandler;
 import net.mamoe.mirai.event.SimpleListenerHost;
 import net.mamoe.mirai.event.events.MessageEvent;
 import net.mamoe.mirai.message.data.MessageSource;
-import net.mamoe.mirai.message.data.MessageSourceKind;
-import net.mamoe.mirai.message.data.SingleMessage;
+import net.mamoe.mirai.message.data.PlainText;
 import org.jetbrains.annotations.NotNull;
-import top.aenlly.qqrobot.strategy.ContextStrategy;
 import top.aenlly.qqrobot.utils.MessageUtils;
 
 import java.util.List;
@@ -32,7 +29,7 @@ public class GlobalListener extends SimpleListenerHost {
         // 获取消息
         MessageSource messageSource = MessageUtils.getMessageSource(event);
         List<Long> at = MessageUtils.getAt(event);
-        List<SingleMessage> plainText = MessageUtils.getPlainText(event);
+        List<PlainText> plainText = MessageUtils.getCommandPlainText(event);
         if(at.size()>1 || messageSource == null || plainText.size()>1){
             throw new RuntimeException("不符合规则");
         }

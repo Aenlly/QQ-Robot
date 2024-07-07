@@ -1,18 +1,23 @@
 package top.aenlly.qqrobot.strategy;
 
-import cn.hutool.core.lang.Opt;
 import cn.hutool.core.util.ArrayUtil;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
-import net.mamoe.mirai.message.data.*;
+import net.mamoe.mirai.message.data.MessageSourceKind;
+import net.mamoe.mirai.message.data.PlainText;
+import top.aenlly.qqrobot.adapter.Command;
+import top.aenlly.qqrobot.constant.CommonConstant;
 import top.aenlly.qqrobot.enmus.MatchTypeEnum;
 import top.aenlly.qqrobot.enmus.OptTypeEnum;
 import top.aenlly.qqrobot.enmus.StatusEnum;
-import top.aenlly.qqrobot.entity.GroupDO;
+import top.aenlly.qqrobot.entity.BotGroupEntity;
 import top.aenlly.qqrobot.mapper.GroupMapper;
 import top.aenlly.qqrobot.utils.MessageUtils;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * 群策略
@@ -21,8 +26,12 @@ public class GroupStrategy implements MessageStrategy{
 
     private final GroupMapper groupMapper;
 
-    public GroupStrategy(GroupMapper groupMapper) {
+
+    private final Map<String, Command> commandHolder;
+
+    public GroupStrategy(GroupMapper groupMapper,List<Command> commands) {
         this.groupMapper = groupMapper;
+        commandHolder = commands.stream().collect(Collectors.toMap(Command::getName, c->c));
     }
 
     @Override
@@ -32,53 +41,42 @@ public class GroupStrategy implements MessageStrategy{
         long groupId = groupMessageEvent.getGroup().getId();
 
         // 获取内容
-        List<SingleMessage> plainText = MessageUtils.getPlainText(event);
+        List<PlainText> plainText = MessageUtils.getCommandPlainText(event);
+        String[] strs = plainText.get(0).contentToString().split(CommonConstant.HSIANG_HSIEN, 2);
+        String msg = strs[0];
 
-        String msg = plainText.get(0).contentToString();
-
-        // 获取被艾特对象
+        // 获取被艾特对象,判断是否存在机器人
         List<Long> ats = MessageUtils.getAt(event);
-        if(ats.size()>1){return;}
+        long count = ats.stream().filter(f -> f.equals(event.getBot().getId())).count();
 
-        GroupDO groupDO = GroupDO.builder()
+        BotGroupEntity query = BotGroupEntity.builder()
                 .matchType(MatchTypeEnum.EXACT)
                 .matchValue(msg.trim())
-                .optType(OptTypeEnum.ORDINARY)
                 .groupId(groupId)
-                .at(Opt.ofNullable(ats).filter(f-> !f.isEmpty()).map(f -> true).orElse(false))
+                .at(count>0)
                 .status(StatusEnum.ENABLED)
-                .optType(OptTypeEnum.ORDINARY).build();
+                .build();
 
         // 精确匹配
-        List<GroupDO> exactList = groupMapper.selectList(groupDO);
-        if(ArrayUtil.isNotEmpty(exactList)){
-            exactList.forEach(f->{
-                event.getSubject().sendMessage(MessageUtils.buildQuoteReplyMessage(event,f.getRevert()));
-            });
-            return;
-        }
-
+        List<BotGroupEntity> exactList = groupMapper.selectList(query);
         // 前缀匹配
-        groupDO.setMatchType(MatchTypeEnum.PREFIX);
-        List<GroupDO> prefixList = groupMapper.selectList(groupDO);
-
-        if(ArrayUtil.isNotEmpty(prefixList)){
-            prefixList.forEach(f->{
-                event.getSubject().sendMessage(MessageUtils.buildQuoteReplyMessage(event,f.getRevert()));
-            });
-            return;
-        }
-
+        query.setMatchType(MatchTypeEnum.PREFIX);
+        List<BotGroupEntity> prefixList = groupMapper.selectList(query);
         // 正则表达式
-        groupDO.setMatchType(MatchTypeEnum.REGEX);
-        List<GroupDO> regexList = groupMapper.selectList(groupDO);;
-        if(ArrayUtil.isNotEmpty(regexList)){
-            regexList.forEach(f->{
-                event.getSubject().sendMessage(MessageUtils.buildQuoteReplyMessage(event,f.getRevert()));
-            });
+        query.setMatchType(MatchTypeEnum.REGEX);
+        List<BotGroupEntity> regexList = groupMapper.selectList(query);;
+        Optional.ofNullable(prefixList).ifPresent(exactList::addAll);
+        Optional.ofNullable(regexList).ifPresent(exactList::addAll);
+
+
+        if(ArrayUtil.isNotEmpty(exactList)){
+            BotGroupEntity botGroupDO = exactList.get(0);
+            if(OptTypeEnum.ORDINARY.equals(botGroupDO.getOptType())){
+                event.getSubject().sendMessage(MessageUtils.buildQuoteReplyMessage(event,botGroupDO.getRevert()));
+                return;
+            }
+            commandHolder.get(botGroupDO.getCommand()).execute(event);
         }
-
-
     }
 
     @Override

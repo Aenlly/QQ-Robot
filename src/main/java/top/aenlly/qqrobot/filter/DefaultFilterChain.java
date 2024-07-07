@@ -9,7 +9,7 @@ public class DefaultFilterChain extends AbstractFilterChain {
 
     @Override
     public void filter(MessageEvent event) {
-
+        filterChain.filter(event);
     }
 
     @Override

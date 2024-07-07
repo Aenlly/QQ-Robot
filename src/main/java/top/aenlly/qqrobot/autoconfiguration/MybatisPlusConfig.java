@@ -10,14 +10,16 @@ import org.springframework.context.annotation.Configuration;
 @Configuration(proxyBeanMethods = false)
 public class MybatisPlusConfig {
 
-  /** 配置乐观锁与分页插件 */
-  @Bean
-  public MybatisPlusInterceptor mybatisPlusInterceptor() {
-    MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
-    // 配置乐观锁
-    interceptor.addInnerInterceptor(new OptimisticLockerInnerInterceptor());
-    // 配置分页插件
-    interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
-    return interceptor;
-  }
+    /**
+     * 配置乐观锁与分页插件
+     */
+    @Bean
+    public MybatisPlusInterceptor mybatisPlusInterceptor() {
+        MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
+        // 配置乐观锁
+        interceptor.addInnerInterceptor(new OptimisticLockerInnerInterceptor());
+        // 配置分页插件
+        interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
+        return interceptor;
+    }
 }

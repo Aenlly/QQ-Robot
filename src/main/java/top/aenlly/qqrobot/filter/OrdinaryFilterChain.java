@@ -3,7 +3,7 @@ package top.aenlly.qqrobot.filter;
 import net.mamoe.mirai.event.events.MessageEvent;
 import net.mamoe.mirai.message.data.MessageSource;
 import net.mamoe.mirai.message.data.MessageSourceKind;
-import net.mamoe.mirai.message.data.SingleMessage;
+import net.mamoe.mirai.message.data.PlainText;
 import top.aenlly.qqrobot.enmus.OrderedEnum;
 import top.aenlly.qqrobot.strategy.ContextStrategy;
 import top.aenlly.qqrobot.utils.MessageUtils;
@@ -32,7 +32,7 @@ public class OrdinaryFilterChain extends AbstractFilterChain{
             filterChain.filter(event);
             return;
         }
-        List<SingleMessage> plainText = MessageUtils.getPlainText(event);
+        List<PlainText> plainText = MessageUtils.getCommandPlainText(event);
         if(plainText.isEmpty()){ return; }
         MessageSourceKind messageSourceKind = messageSource.getKind();
         contextStrategy.processMessage(messageSourceKind,event);

@@ -1,10 +1,11 @@
 package top.aenlly.qqrobot.filter;
 
+import net.mamoe.mirai.event.events.FriendMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
-import net.mamoe.mirai.message.data.SingleMessage;
 import top.aenlly.qqrobot.adapter.Command;
-import top.aenlly.qqrobot.enmus.CommandEnum;
 import top.aenlly.qqrobot.enmus.OrderedEnum;
+import top.aenlly.qqrobot.mapper.GroupMapper;
+import top.aenlly.qqrobot.utils.CommandUtils;
 import top.aenlly.qqrobot.utils.MessageUtils;
 
 import java.util.List;
@@ -13,10 +14,12 @@ import java.util.stream.Collectors;
 
 public class CommandFilterChain extends AbstractFilterChain {
 
-    private Map<String, Command> commandMap;
+    private final Map<String, Command> commandHolder;
+
+    private GroupMapper groupMapper;
 
     public CommandFilterChain(List<Command> commands) {
-        commandMap = commands.stream().collect(Collectors.toMap(Command::getName,c->c));
+        commandHolder = commands.stream().collect(Collectors.toMap(Command::getName,c->c));
     }
 
     @Override
@@ -26,16 +29,15 @@ public class CommandFilterChain extends AbstractFilterChain {
 
     @Override
     public void filter(MessageEvent event) {
+        if(event instanceof FriendMessageEvent){
+            CommandUtils.commandExecute(event,commandHolder);
+            return;
+        }
         List<Long> ats = MessageUtils.getAt(event);
-        List<SingleMessage> plainText = MessageUtils.getPlainText(event);
         if(ats.size() != 1){
             filterChain.filter(event);
+            return;
         }
-        String command = CommandEnum.DEFAULT.name();
-        if(!plainText.isEmpty()) {
-            command = plainText.get(0).contentToString();
-        }
-        commandMap.get(command).execute(event);
-
+        CommandUtils.commandExecute(event,commandHolder);
     }
 }
