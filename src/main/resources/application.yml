@@ -4,7 +4,8 @@ spring:
 
   profiles:
     active: dev
-
+  main:
+    allow-circular-references: true
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
@@ -14,15 +15,15 @@ spring:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
 
-QQ:
-  account:
-    qq: 0
-    password: ''
-
 mybatis-plus:
   mapper-locations: classpath:mapper/*.xml
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl # 输出日志
     default-enum-type-handler: org.apache.ibatis.type.EnumTypeHandler
   type-aliases-package: top.aenlly.qqrobot.entity
-debug: true
+aenlly:
+  ai:
+    ernieSpeed128k: true
+  robot:
+    baidu:
+      enable: true

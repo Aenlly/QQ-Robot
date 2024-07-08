@@ -1,9 +1,10 @@
-package top.aenlly.qqrobot.core.common;
+package top.aenlly.qqrobot.context;
 
 import cn.hutool.cache.impl.LRUCache;
 import lombok.Data;
 import org.springframework.stereotype.Component;
 import top.aenlly.qqrobot.adapter.Command;
+import top.aenlly.qqrobot.core.common.CommandModeContext;
 import top.aenlly.qqrobot.filter.AbstractFilterChain;
 import top.aenlly.qqrobot.filter.MessageFilterChain;
 
@@ -20,7 +21,7 @@ public class GeneralContext {
 
     private MessageFilterChain filterChain;
 
-    public static LRUCache<String,CommandModeContext> commandStatusMap=new LRUCache<>(8);
+    public static LRUCache<String, CommandModeContext> COMMAND_CACHE_MAP =new LRUCache<>(8);
 
     public GeneralContext(List<Command> commands, List<AbstractFilterChain> filterChains) {
         this.commandMap = commands.stream().collect(Collectors.toMap(Command::getName, c->c));;
@@ -29,5 +30,9 @@ public class GeneralContext {
             filterChains.get(i).nextFilterChain(filterChains.get(++i));
         }
         this.filterChain = filterChains.get(0);
+    }
+
+    public static void setCommand(String key,CommandModeContext modeContext){
+        COMMAND_CACHE_MAP.put(key,modeContext);
     }
 }

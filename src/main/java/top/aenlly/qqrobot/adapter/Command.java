@@ -1,6 +1,6 @@
 package top.aenlly.qqrobot.adapter;
 
-import net.mamoe.mirai.event.events.MessageEvent;
+import top.aenlly.qqrobot.context.CommandContext;
 
 public interface Command {
 
@@ -12,7 +12,7 @@ public interface Command {
 
     /**
      * 执行
-     * @param event 消息事件
+     * @param context 上下文
      */
-    void execute(MessageEvent event);
+    void execute(CommandContext context);
 }

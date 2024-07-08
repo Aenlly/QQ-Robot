@@ -2,8 +2,6 @@ package top.aenlly.qqrobot.autoconfiguration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import top.aenlly.qqrobot.adapter.Command;
-import top.aenlly.qqrobot.mapper.GroupMapper;
 import top.aenlly.qqrobot.strategy.*;
 
 import java.util.List;
@@ -16,10 +14,10 @@ public class StrategyAutoConfiguration {
         return new FriendStrategy();
     }
 
-    @Bean
-    public MessageStrategy groupStrategy(GroupMapper groupMapper, List<Command> commands){
-        return new GroupStrategy(groupMapper,commands);
-    }
+    // @Bean
+    // public MessageStrategy groupStrategy(BoCommandMapper boCommandMapper, List<Command> commands){
+    //     return new GroupStrategy(boCommandMapper,commands);
+    // }
 
     @Bean
     public MessageStrategy tempStrategy(){

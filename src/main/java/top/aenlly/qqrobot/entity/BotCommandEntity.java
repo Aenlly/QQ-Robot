@@ -11,8 +11,8 @@ import top.aenlly.qqrobot.enmus.StatusEnum;
 @Data
 @Builder
 @EqualsAndHashCode(callSuper = true)
-@TableName(value = "bot_group",autoResultMap = true)
-public class BotGroupEntity extends BaseEntity {
+@TableName(value = "bot_command",autoResultMap = true)
+public class BotCommandEntity extends BaseEntity {
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 

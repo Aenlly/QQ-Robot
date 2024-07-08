@@ -1,0 +1,14 @@
+{
+  "properties": [
+    {
+      "name": "aenlly.robot.baidu.client-id",
+      "type": "java.lang.String",
+      "description": "Description for aenlly.robot.baidu.client-id."
+    },
+    {
+      "name": "aenlly.robot.baidu.client-secret",
+      "type": "java.lang.String",
+      "description": "Description for aenlly.robot.baidu.client-secret."
+    }
+  ]
+}

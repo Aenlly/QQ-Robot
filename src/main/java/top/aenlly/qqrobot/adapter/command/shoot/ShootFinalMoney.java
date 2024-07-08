@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.LocalDateTimeUtil;
 import cn.hutool.json.JSONUtil;
+import net.mamoe.mirai.event.events.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import top.aenlly.qqrobot.adapter.command.AbstractCommand;
@@ -39,7 +40,21 @@ public class ShootFinalMoney extends AbstractCommand {
     }
 
     @Override
-    protected void after() {
+    protected void execute(GroupMessageEvent event) {
+        command();
+    }
+
+    @Override
+    protected void execute(FriendMessageEvent event) {
+        command();
+    }
+
+    @Override
+    protected void execute(GroupTempMessageEvent event) {
+        command();
+    }
+
+    private void command() {
         long id = event.getSender().getId();
         List<UserGroupEntity> userGroupEntities = userGroupMapper.selectList(new LambdaQueryWrapperX<UserGroupEntity>().eq(UserGroupEntity::getAdminQQ, id).in(UserGroupEntity::getRoleType, RoleTypeEnum.ALL, RoleTypeEnum.QUERY));
         LambdaQueryWrapperX<ShootOrderEntity> queryWrapperX = new LambdaQueryWrapperX<>();

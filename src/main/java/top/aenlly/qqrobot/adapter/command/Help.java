@@ -11,8 +11,4 @@ public class Help extends AbstractCommand {
     }
 
 
-    @Override
-    protected void after() {
-
-    }
 }

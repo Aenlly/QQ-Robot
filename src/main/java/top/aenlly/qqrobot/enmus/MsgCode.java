@@ -7,10 +7,11 @@ import lombok.Getter;
 @Getter
 public enum MsgCode implements AlertCapable {
 
-    CONVERTED("SYS300000","转换错误"),
     PARAMS_ERROR_1("SYS500000","参数错误：%s，应为：%s"),
     PARAMS_ERROR_2("SYS500000","参数错误"),
-    OPT_SUCCESS("SYS000001","操作成功")
+    OPT_SUCCESS("SYS000001","操作成功"),
+    CONVERTED("SYS900001","转换错误"),
+    BAIDU_TOKEN_ERROR("SY900002","获取token失败")
     ;
 
     private final String code;

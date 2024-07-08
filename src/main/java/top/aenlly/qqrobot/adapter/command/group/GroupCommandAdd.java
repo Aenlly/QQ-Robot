@@ -1,20 +1,20 @@
 package top.aenlly.qqrobot.adapter.command.group;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.lang.Pair;
 import cn.hutool.json.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.message.data.MessageChain;
 import net.mamoe.mirai.message.data.MessageChainBuilder;
-import net.mamoe.mirai.message.data.PlainText;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import top.aenlly.qqrobot.adapter.command.AbstractCommand;
 import top.aenlly.qqrobot.constant.CommonConstant;
 import top.aenlly.qqrobot.enmus.*;
-import top.aenlly.qqrobot.entity.BotGroupEntity;
+import top.aenlly.qqrobot.entity.BotCommandEntity;
 import top.aenlly.qqrobot.entity.UserGroupEntity;
-import top.aenlly.qqrobot.mapper.GroupMapper;
+import top.aenlly.qqrobot.mapper.BoCommandMapper;
 import top.aenlly.qqrobot.mapper.UserGroupMapper;
 import top.aenlly.qqrobot.mapper.query.LambdaQueryWrapperX;
 import top.aenlly.qqrobot.utils.MessageUtils;
@@ -23,10 +23,10 @@ import java.util.List;
 
 @Slf4j
 @Component
-public class GroupCommandAdd extends AbstractCommand<GroupMessageEvent> {
+public class GroupCommandAdd extends AbstractCommand {
 
     @Autowired
-    private GroupMapper groupMapper;
+    private BoCommandMapper boCommandMapper;
 
     @Autowired
     private UserGroupMapper userGroupMapper;
@@ -36,15 +36,15 @@ public class GroupCommandAdd extends AbstractCommand<GroupMessageEvent> {
         return CommandEnum.GROUP_ADD.name();
     }
 
+
     @Override
-    protected void after() {
+    protected void execute(GroupMessageEvent event) {
         long id = event.getSender().getId();
         List<UserGroupEntity> userGroupEntities = userGroupMapper.selectList(new LambdaQueryWrapperX<UserGroupEntity>().eq(UserGroupEntity::getAdminQQ, id).in(UserGroupEntity::getRoleType, RoleTypeEnum.ALL, RoleTypeEnum.ADD));
         if (CollUtil.isEmpty(userGroupEntities)) {return;}
 
-        List<PlainText> plainText = MessageUtils.getCommandPlainText(event);
-
-        String[] strs = plainText.get(1).contentToString().split(CommonConstant.HSIANG_HSIEN,2);
+        Pair<String, String> pair = MessageUtils.getCommandPlainText(event);
+        String[] strs = pair.getValue().split(CommonConstant.HSIANG_HSIEN,2);
 
         String str = strs[0];
 
@@ -126,9 +126,8 @@ public class GroupCommandAdd extends AbstractCommand<GroupMessageEvent> {
     }
 
     public void add(MatchTypeEnum matchType, String matchValue, String revert, Boolean at, OptTypeEnum optType, StatusEnum status, String command, boolean ignoreCase) {
-
-        BotGroupEntity entity = BotGroupEntity.builder()
-                .groupId(event.getGroup().getId())
+        BotCommandEntity entity = BotCommandEntity.builder()
+                .groupId(((GroupMessageEvent)event).getGroup().getId())
                 .matchType(matchType)
                 .matchValue(CommonConstant.COMMA + matchValue + CommonConstant.COMMA)
                 .revert(revert)
@@ -138,7 +137,7 @@ public class GroupCommandAdd extends AbstractCommand<GroupMessageEvent> {
                 .command(command)
                 .ignoreCase(ignoreCase)
                 .build();
-        groupMapper.insert(entity);
+        boCommandMapper.insert(entity);
 
         MessageChain msg = new MessageChainBuilder().append(MsgCode.OPT_SUCCESS.getMsg()).append("\n").append(JSONUtil.toJsonStr(entity)).build();
         event.getSubject().sendMessage(msg);

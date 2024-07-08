@@ -1,47 +1,75 @@
 package top.aenlly.qqrobot.adapter.command;
 
+import cn.hutool.core.lang.Opt;
 import lombok.extern.slf4j.Slf4j;
-import net.mamoe.mirai.event.events.MessageEvent;
-import net.mamoe.mirai.message.data.PlainText;
+import net.mamoe.mirai.event.events.*;
+import net.mamoe.mirai.message.data.MessageSourceKind;
 import top.aenlly.qqrobot.adapter.Command;
-import top.aenlly.qqrobot.enmus.MsgCode;
-import top.aenlly.qqrobot.utils.ExceptionUtils;
+import top.aenlly.qqrobot.context.CommandContext;
+import top.aenlly.qqrobot.context.GeneralContext;
+import top.aenlly.qqrobot.core.common.CommandModeContext;
+import top.aenlly.qqrobot.enmus.CommandEnum;
 import top.aenlly.qqrobot.utils.MessageUtils;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Slf4j
-public abstract class AbstractCommand<T extends MessageEvent> implements Command {
+public abstract class AbstractCommand implements Command {
 
-    protected List<PlainText> msgTextList;
+    protected MessageEvent event;
 
-    protected T event;
+    protected CommandContext context;
+
+    /**
+     * 开启持续命令模式
+     */
+    protected boolean openContinuedCommand=false;
 
     @Override
-    public void execute(MessageEvent event) {
-        before();
-        init(event);
-        after();
-    }
-
-    private void init(MessageEvent event){
-        msgTextList = MessageUtils.getCommandPlainText(event);
-        try {
-            this.event = (T) event;
-        } catch (Exception e) {
-            ExceptionUtils.SystemException(MsgCode.CONVERTED, e.fillInStackTrace());
-            log.error("event converted error");
+    public void execute(CommandContext context) {
+        this.context=context;
+        event=context.getEvent();
+        if(getOpenContinuedCommand()&&!Opt.ofNullable(context.getOpenContinuedCommand()).orElse(false)) {
+            openContinuedCommand();
+            return;
+        }
+        if(event instanceof GroupMessageEvent){
+            execute((GroupMessageEvent) event);
+        }
+        if(event instanceof FriendMessageEvent){
+            execute((FriendMessageEvent) event);
+        }
+        if(event instanceof GroupTempMessageEvent){
+            execute((GroupTempMessageEvent) event);
+        }
+        if(event instanceof StrangerMessageEvent){
+            execute((StrangerMessageEvent) event);
         }
     }
 
-    /**
-     * 基础方法执行前
-     */
-    protected void before(){
+    protected void execute(GroupMessageEvent event){};
+    protected void execute(FriendMessageEvent event){};
+    protected void execute(GroupTempMessageEvent event){};
+    protected void execute(StrangerMessageEvent event){};
 
-    };
-    /**
-     * 基础方法执行后
-     */
-    protected abstract void after();
+    private void openContinuedCommand() {
+
+        MessageSourceKind kind = event.getSource().getKind();
+        GeneralContext.setCommand(kind.name()+event.getSender().getId()
+                ,CommandModeContext.builder()
+                        .commandEnum(CommandEnum.valueOf(getName()))
+                        .duration(30)
+                        .startTime(LocalDateTime.now())
+                        .build());
+        openSubjectMsg();
+        log.info("开启命令：{}",getName());
+    }
+
+    protected void openSubjectMsg(){
+        MessageUtils.senderQuoteReplyMessage(event,String.format("已进入:【%s】",CommandEnum.valueOf(context.getCommand()).getMsg()));
+    }
+
+    public boolean getOpenContinuedCommand() {
+        return openContinuedCommand;
+    }
 }

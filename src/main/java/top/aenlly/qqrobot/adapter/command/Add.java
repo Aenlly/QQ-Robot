@@ -12,8 +12,4 @@ public class Add extends AbstractCommand {
         return CommandEnum.ADD.name();
     }
 
-    @Override
-    protected void after() {
-
-    }
 }

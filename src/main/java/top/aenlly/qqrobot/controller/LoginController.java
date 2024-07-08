@@ -19,7 +19,7 @@ public class LoginController {
     @Autowired
     private LoginService loginService;
 
-    @GetMapping("/login")
+    @GetMapping("/login/bot")
     public void login(@RequestParam("qq") Long qq) {
         loginService.login(qq);
     }
