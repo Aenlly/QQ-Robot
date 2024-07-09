@@ -1,47 +1,65 @@
-package top.aenlly.qqrobot.adapter.command.group;
+package top.aenlly.qqrobot.adapter.command;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.Pair;
 import cn.hutool.json.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
+import net.mamoe.mirai.event.events.FriendMessageEvent;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
+import net.mamoe.mirai.event.events.GroupTempMessageEvent;
 import net.mamoe.mirai.message.data.MessageChain;
 import net.mamoe.mirai.message.data.MessageChainBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import top.aenlly.qqrobot.adapter.command.AbstractCommand;
 import top.aenlly.qqrobot.constant.CommonConstant;
 import top.aenlly.qqrobot.enmus.*;
-import top.aenlly.qqrobot.entity.BotCommandEntity;
-import top.aenlly.qqrobot.entity.UserGroupEntity;
-import top.aenlly.qqrobot.mapper.BoCommandMapper;
-import top.aenlly.qqrobot.mapper.UserGroupMapper;
-import top.aenlly.qqrobot.mapper.query.LambdaQueryWrapperX;
+import top.aenlly.qqrobot.entity.BotGroupCommandEntity;
+import top.aenlly.qqrobot.entity.UserRoleEntity;
+import top.aenlly.qqrobot.mapper.BotGroupCommandMapper;
+import top.aenlly.qqrobot.mapper.UserRoleMapper;
 import top.aenlly.qqrobot.utils.MessageUtils;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
 @Component
-public class GroupCommandAdd extends AbstractCommand {
+public class CommandAdd extends AbstractCommand {
 
     @Autowired
-    private BoCommandMapper boCommandMapper;
+    private BotGroupCommandMapper botGroupCommandMapper;
 
     @Autowired
-    private UserGroupMapper userGroupMapper;
+    private UserRoleMapper userRoleMapper;
 
     @Override
     public String getName() {
         return CommandEnum.GROUP_ADD.name();
     }
 
-
     @Override
     protected void execute(GroupMessageEvent event) {
-        long id = event.getSender().getId();
-        List<UserGroupEntity> userGroupEntities = userGroupMapper.selectList(new LambdaQueryWrapperX<UserGroupEntity>().eq(UserGroupEntity::getAdminQQ, id).in(UserGroupEntity::getRoleType, RoleTypeEnum.ALL, RoleTypeEnum.ADD));
-        if (CollUtil.isEmpty(userGroupEntities)) {return;}
+        add(event.getGroup().getId());
+    }
+
+    @Override
+    protected void execute(FriendMessageEvent event) {
+        add(null);
+    }
+
+    @Override
+    protected void execute(GroupTempMessageEvent event) {
+        add(event.getGroup().getId());
+    }
+
+    private boolean add(Long groupId) {
+        UserRoleEntity query = UserRoleEntity.builder().adminQQ(event.getSender().getId())
+                .groupId(groupId).build();
+        List<UserRoleEntity> userGroupEntities = userRoleMapper.queryUserRole(query, Arrays.asList(RoleTypeEnum.ALL, RoleTypeEnum.ADD));
+
+        if (CollUtil.isEmpty(userGroupEntities)) {
+            return true;
+        }
 
         Pair<String, String> pair = MessageUtils.getCommandPlainText(event);
         String[] strs = pair.getValue().split(CommonConstant.HSIANG_HSIEN,2);
@@ -60,6 +78,7 @@ public class GroupCommandAdd extends AbstractCommand {
             case 8->
                     this.add8(strs[1]);
         }
+        return false;
     }
 
     private void add2(String str){
@@ -126,7 +145,7 @@ public class GroupCommandAdd extends AbstractCommand {
     }
 
     public void add(MatchTypeEnum matchType, String matchValue, String revert, Boolean at, OptTypeEnum optType, StatusEnum status, String command, boolean ignoreCase) {
-        BotCommandEntity entity = BotCommandEntity.builder()
+        BotGroupCommandEntity entity = BotGroupCommandEntity.builder()
                 .groupId(((GroupMessageEvent)event).getGroup().getId())
                 .matchType(matchType)
                 .matchValue(CommonConstant.COMMA + matchValue + CommonConstant.COMMA)
@@ -137,7 +156,7 @@ public class GroupCommandAdd extends AbstractCommand {
                 .command(command)
                 .ignoreCase(ignoreCase)
                 .build();
-        boCommandMapper.insert(entity);
+        botGroupCommandMapper.insert(entity);
 
         MessageChain msg = new MessageChainBuilder().append(MsgCode.OPT_SUCCESS.getMsg()).append("\n").append(JSONUtil.toJsonStr(entity)).build();
         event.getSubject().sendMessage(msg);

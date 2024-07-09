@@ -80,17 +80,4 @@ public class BaiduTokenUtils {
         return result;
     }
 
-    /**
-     * 会在url后面自动拼接access_token
-     * @param o 参数
-     * @param t 返回值
-     * @param url
-     * @return
-     * @param <O>
-     * @param <T>
-     */
-    public static <O,T> T post(O o,Class<T> t,String url){
-        String resultJson = HttpUtil.post(url, JSONUtil.toJsonStr(o));
-        return JSONUtil.toBean(resultJson,t);
-    }
 }

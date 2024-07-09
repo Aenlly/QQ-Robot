@@ -35,4 +35,8 @@ public class GeneralContext {
     public static void setCommand(String key,CommandModeContext modeContext){
         COMMAND_CACHE_MAP.put(key,modeContext);
     }
+
+    public static void removeCommand(String key){
+        COMMAND_CACHE_MAP.remove(key);
+    }
 }

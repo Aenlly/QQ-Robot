@@ -15,7 +15,7 @@ public class StrategyAutoConfiguration {
     }
 
     // @Bean
-    // public MessageStrategy groupStrategy(BoCommandMapper boCommandMapper, List<Command> commands){
+    // public MessageStrategy groupStrategy(BotGroupCommandMapper boCommandMapper, List<Command> commands){
     //     return new GroupStrategy(boCommandMapper,commands);
     // }
 

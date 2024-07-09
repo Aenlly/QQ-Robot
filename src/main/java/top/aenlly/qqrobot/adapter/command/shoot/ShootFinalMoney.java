@@ -14,9 +14,9 @@ import top.aenlly.qqrobot.enmus.CommandEnum;
 import top.aenlly.qqrobot.enmus.RoleTypeEnum;
 import top.aenlly.qqrobot.enmus.ShootOrderStatusEnum;
 import top.aenlly.qqrobot.entity.ShootOrderEntity;
-import top.aenlly.qqrobot.entity.UserGroupEntity;
+import top.aenlly.qqrobot.entity.UserRoleEntity;
 import top.aenlly.qqrobot.mapper.ShootOrderMapper;
-import top.aenlly.qqrobot.mapper.UserGroupMapper;
+import top.aenlly.qqrobot.mapper.UserRoleMapper;
 import top.aenlly.qqrobot.mapper.query.LambdaQueryWrapperX;
 
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ public class ShootFinalMoney extends AbstractCommand {
     private ShootOrderMapper shootOrderMapper;
 
     @Autowired
-    private UserGroupMapper userGroupMapper;
+    private UserRoleMapper userRoleMapper;
 
     @Override
     public String getName() {
@@ -56,7 +56,8 @@ public class ShootFinalMoney extends AbstractCommand {
 
     private void command() {
         long id = event.getSender().getId();
-        List<UserGroupEntity> userGroupEntities = userGroupMapper.selectList(new LambdaQueryWrapperX<UserGroupEntity>().eq(UserGroupEntity::getAdminQQ, id).in(UserGroupEntity::getRoleType, RoleTypeEnum.ALL, RoleTypeEnum.QUERY));
+        List<UserRoleEntity> userGroupEntities = userRoleMapper.selectList(new LambdaQueryWrapperX<UserRoleEntity>().eq(UserRoleEntity::getAdminQQ, id).in(
+                UserRoleEntity::getRoleType, RoleTypeEnum.ALL, RoleTypeEnum.QUERY));
         LambdaQueryWrapperX<ShootOrderEntity> queryWrapperX = new LambdaQueryWrapperX<>();
         if (CollUtil.isNotEmpty(userGroupEntities)) {
             queryWrapperX.eqIfPresent(ShootOrderEntity::getAdminQQ, id);

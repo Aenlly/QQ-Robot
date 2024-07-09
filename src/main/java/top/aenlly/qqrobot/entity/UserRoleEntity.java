@@ -10,13 +10,11 @@ import top.aenlly.qqrobot.enmus.RoleTypeEnum;
 
 @Data
 @Builder
-@TableName(value = "user_group",autoResultMap = true)
-public class UserGroupEntity {
+@TableName(value = "user_role",autoResultMap = true)
+public class UserRoleEntity {
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
-
-    @TableField("group_id")
     private Long groupId;
 
     /**
@@ -28,7 +26,6 @@ public class UserGroupEntity {
     /**
      * 权限
      */
-    @TableField("role_type")
     private RoleTypeEnum roleType;
 
 }

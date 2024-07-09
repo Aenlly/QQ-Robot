@@ -47,6 +47,9 @@ dependencies {
     compileOnly 'mysql:mysql-connector-java:5.1.49'
     implementation 'com.alibaba:druid-spring-boot-3-starter:1.2.20'
 
+    // http
+    implementation 'org.apache.httpcomponents:httpclient:4.5.12'
+
     // 机器人所需
     api(platform("net.mamoe:mirai-bom:2.16.0")) //统一管理mirai版本
     api("net.mamoe:mirai-core-api")     // 编译代码使用

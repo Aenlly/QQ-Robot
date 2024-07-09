@@ -9,9 +9,13 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import top.aenlly.qqrobot.adapter.command.AbstractCommand;
 import top.aenlly.qqrobot.enmus.CommandEnum;
+import top.aenlly.qqrobot.enmus.ExitEnum;
 import top.aenlly.qqrobot.tps.baidu.*;
 import top.aenlly.qqrobot.tps.baidu.properties.Baidu;
+import top.aenlly.qqrobot.utils.HttpUtils;
 import top.aenlly.qqrobot.utils.MessageUtils;
+
+import java.util.Arrays;
 
 @ConditionalOnProperty(prefix = "aenlly.ai",value = "ernieSpeed128k",havingValue = "true")
 @Component
@@ -40,7 +44,7 @@ public class Ernie_Speed_128K extends AbstractCommand implements AI{
         user.setContent(content);
         aiReqVO.getMessages().add(user);
         String token = BaiduTokenUtils.getToken(baidu);
-        AIRspVO result = BaiduTokenUtils.post(aiReqVO, AIRspVO.class, BaiduConstant.ERNIE_SPEED_128K + "?access_token=" + token);
+        AIRspVO result = HttpUtils.post(aiReqVO, AIRspVO.class, BaiduConstant.ERNIE_SPEED_128K + "?access_token=" + token);
         if (result.getError_code() != null) {
             AI_MSG_LOG.remove(key);
             MessageUtils.senderQuoteReplyMessage(event,result.getError_msg()+"\n"+"token已刷新，请稍后再试！");
@@ -66,5 +70,13 @@ public class Ernie_Speed_128K extends AbstractCommand implements AI{
     @Override
     public boolean getOpenContinuedCommand() {
         return true;
+    }
+
+    @Override
+    protected boolean isContinuedCommand() {
+        if(Arrays.stream(ExitEnum.values).anyMatch(f -> f.getValue().equals(context.getContent()))){
+            return true;
+        }
+        return super.isContinuedCommand();
     }
 }

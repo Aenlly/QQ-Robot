@@ -23,50 +23,87 @@ public abstract class AbstractCommand implements Command {
     /**
      * 开启持续命令模式
      */
-    protected boolean openContinuedCommand=false;
+    protected boolean openContinuedCommand = false;
 
     @Override
     public void execute(CommandContext context) {
-        this.context=context;
-        event=context.getEvent();
-        if(getOpenContinuedCommand()&&!Opt.ofNullable(context.getOpenContinuedCommand()).orElse(false)) {
+        this.context = context;
+        event = context.getEvent();
+        if (getOpenContinuedCommand() && !Opt.ofNullable(context.getOpenContinuedCommand()).orElse(false)) {
             openContinuedCommand();
             return;
         }
-        if(event instanceof GroupMessageEvent){
+
+        if (isContinuedCommand()) {
+            closeContinuedCommand();
+            return;
+        }
+
+        if (event instanceof GroupMessageEvent) {
             execute((GroupMessageEvent) event);
         }
-        if(event instanceof FriendMessageEvent){
+        if (event instanceof FriendMessageEvent) {
             execute((FriendMessageEvent) event);
         }
-        if(event instanceof GroupTempMessageEvent){
+        if (event instanceof GroupTempMessageEvent) {
             execute((GroupTempMessageEvent) event);
         }
-        if(event instanceof StrangerMessageEvent){
+        if (event instanceof StrangerMessageEvent) {
             execute((StrangerMessageEvent) event);
         }
     }
 
-    protected void execute(GroupMessageEvent event){};
-    protected void execute(FriendMessageEvent event){};
-    protected void execute(GroupTempMessageEvent event){};
-    protected void execute(StrangerMessageEvent event){};
+    protected void execute(GroupMessageEvent event) {}
+
+    ;
+
+    protected void execute(FriendMessageEvent event) {}
+
+    ;
+
+    protected void execute(GroupTempMessageEvent event) {}
+
+    ;
+
+    protected void execute(StrangerMessageEvent event) {}
+
+    ;
 
     private void openContinuedCommand() {
-
         MessageSourceKind kind = event.getSource().getKind();
-        GeneralContext.setCommand(kind.name()+event.getSender().getId()
-                ,CommandModeContext.builder()
+        GeneralContext.setCommand(kind.name() + event.getSender().getId()
+                , CommandModeContext.builder()
                         .commandEnum(CommandEnum.valueOf(getName()))
                         .duration(30)
                         .startTime(LocalDateTime.now())
                         .build());
-        openSubjectMsg();
-        log.info("开启命令：{}",getName());
+        log.info("开启命令：{}", getName());
+        subjectMsg("已启用");
     }
 
-    protected void openSubjectMsg(){
-        MessageUtils.senderQuoteReplyMessage(event,String.format("已进入:【%s】",CommandEnum.valueOf(context.getCommand()).getMsg()));
+    /**
+     * 关闭继续命令
+     *
+     * @return
+     */
+    protected boolean isContinuedCommand() {
+        return false;
+    }
+
+    /**
+     * 关闭继续命令
+     *
+     * @return
+     */
+    protected void closeContinuedCommand() {
+        MessageSourceKind kind = event.getSource().getKind();
+        GeneralContext.removeCommand(kind.name() + event.getSender().getId());
+        log.info("关闭命令：{}", getName());
+        subjectMsg("已关闭");
+    }
+
+    private void subjectMsg(String prefix) {
+        MessageUtils.senderQuoteReplyMessage(event, prefix + "【" + CommandEnum.valueOf(context.getCommand()).getMsg() + "】模式");
     }
 
     public boolean getOpenContinuedCommand() {
