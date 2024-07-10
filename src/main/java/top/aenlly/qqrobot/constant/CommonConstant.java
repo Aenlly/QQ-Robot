@@ -11,4 +11,6 @@ public interface CommonConstant {
 
     String SPACE=" ";
     String HSIANG_HSIEN="\n";
+
+    Integer BAN_DEFAULT=60*60;
 }

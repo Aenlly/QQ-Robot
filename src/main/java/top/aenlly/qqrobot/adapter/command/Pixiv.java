@@ -2,9 +2,11 @@ package top.aenlly.qqrobot.adapter.command;
 
 import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
+import top.aenlly.qqrobot.constant.CommonConstant;
 import top.aenlly.qqrobot.constant.SiteConstant;
 import top.aenlly.qqrobot.enmus.CommandEnum;
 import top.aenlly.qqrobot.tps.pixiv.MessageVO;
@@ -27,6 +29,20 @@ public class Pixiv extends AbstractCommand{
 
     @Override
     protected void execute(GroupMessageEvent event) {
+        if(StrUtil.isBlank(context.getContent())) {
+            random();
+        }
+        String[] str = context.getContent().split(CommonConstant.SPACE);
+        switch (str[0]){
+            case "-r"->random();
+            case "-i"->getAssignImage(Long.parseLong(str[1]));
+        }
+    }
+
+    /**
+     * 随机
+     */
+    private void random(){
         HashMap<String, String> header = new HashMap<>();
         String url = String.format(SiteConstant.PIXIV, DateUtil.formatDate(DateUtil.date().offset(DateField.HOUR,-25)), PAGE_SIZE);
         MessageVO messageVO = HttpUtils.get(url, header, MessageVO.class);
@@ -44,5 +60,9 @@ public class Pixiv extends AbstractCommand{
         if (downloadFile){
             MessageUtils.senderImage(event, fileName);
         }
+    }
+
+    private void getAssignImage(Long id){
+
     }
 }

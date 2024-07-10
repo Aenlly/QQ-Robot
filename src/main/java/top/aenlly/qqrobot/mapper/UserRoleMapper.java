@@ -11,10 +11,17 @@ import java.util.List;
 public interface UserRoleMapper extends BaseMapperX<UserRoleEntity> {
 
 
-    default List<UserRoleEntity> queryUserRole(UserRoleEntity userRoleEntity,List<RoleTypeEnum> roleTypeEnums){
+    default List<UserRoleEntity> queryUserRole(UserRoleEntity userRoleEntity, List<RoleTypeEnum> roleTypeEnums) {
         return this.selectList(new LambdaQueryWrapperX<UserRoleEntity>()
                 .eq(UserRoleEntity::getAdminQQ, userRoleEntity.getAdminQQ())
                 .eqIfPresent(UserRoleEntity::getGroupId, userRoleEntity.getGroupId())
                 .in(UserRoleEntity::getRoleType, roleTypeEnums));
+    }
+
+    default int deleteByEntity(UserRoleEntity userRoleEntity){
+        return this.delete(new LambdaQueryWrapperX<UserRoleEntity>()
+                .eq(UserRoleEntity::getAdminQQ, userRoleEntity.getAdminQQ())
+                .eqIfPresent(UserRoleEntity::getGroupId, userRoleEntity.getGroupId())
+                .in(UserRoleEntity::getRoleType, userRoleEntity.getRoleType()));
     }
 }

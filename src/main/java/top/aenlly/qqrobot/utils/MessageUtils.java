@@ -88,10 +88,6 @@ public class MessageUtils {
     }
 
 
-    public static QuoteReply getQuoteReply(MessageEvent event) {
-        return event.getMessage().get(QuoteReply.Key);
-    }
-
     public static MessageChain buildMessage(MessageEvent event, boolean isQuote, Image image, String revert) {
         MessageChainBuilder singleMessages = new MessageChainBuilder();
         // 引用收到的消息并回复, 也可以添加图片等更多元素.

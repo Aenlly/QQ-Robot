@@ -9,6 +9,7 @@ import top.aenlly.qqrobot.context.CommandContext;
 import top.aenlly.qqrobot.context.GeneralContext;
 import top.aenlly.qqrobot.core.common.CommandModeContext;
 import top.aenlly.qqrobot.enmus.CommandEnum;
+import top.aenlly.qqrobot.enmus.MsgCode;
 import top.aenlly.qqrobot.utils.MessageUtils;
 
 import java.time.LocalDateTime;
@@ -71,7 +72,16 @@ public abstract class AbstractCommand implements Command {
 
     private void openContinuedCommand() {
         MessageSourceKind kind = event.getSource().getKind();
-        GeneralContext.setCommand(kind.name() + event.getSender().getId()
+        long id ;
+        if (kind == MessageSourceKind.GROUP) {
+            id = ((GroupMessageEvent) event).getGroup().getId();
+        }
+        else if (kind == MessageSourceKind.FRIEND) {
+            id = ((FriendMessageEvent) event).getFriend().getId();
+        }else {
+            return;
+        }
+        GeneralContext.setCommand(kind.name() + id
                 , CommandModeContext.builder()
                         .commandEnum(CommandEnum.valueOf(getName()))
                         .duration(30)
@@ -97,16 +107,34 @@ public abstract class AbstractCommand implements Command {
      */
     protected void closeContinuedCommand() {
         MessageSourceKind kind = event.getSource().getKind();
-        GeneralContext.removeCommand(kind.name() + event.getSender().getId());
+        long id ;
+        if (kind == MessageSourceKind.GROUP) {
+            id = ((GroupMessageEvent) event).getGroup().getId();
+        }
+        else if (kind == MessageSourceKind.FRIEND) {
+            id = ((FriendMessageEvent) event).getFriend().getId();
+        }else {
+            return;
+        }
+        GeneralContext.removeCommand(kind.name() + id);
         log.info("关闭命令：{}", getName());
         subjectMsg("已关闭");
     }
 
     private void subjectMsg(String prefix) {
-        MessageUtils.senderQuoteReplyMessage(event, prefix + "【" + CommandEnum.valueOf(context.getCommand()).getMsg() + "】模式");
+        send(prefix + "【" + CommandEnum.valueOf(context.getCommand()).getMsg() + "】模式");
     }
 
     public boolean getOpenContinuedCommand() {
         return openContinuedCommand;
     }
+
+    protected void sendPermission() {
+        send(MsgCode.PERMISSIONS_MISSING.getMsg());
+    }
+
+    protected void send(String message) {
+        MessageUtils.senderQuoteReplyMessage(event, message);
+    }
+
 }

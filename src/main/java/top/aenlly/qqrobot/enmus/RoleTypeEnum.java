@@ -13,7 +13,10 @@ public enum RoleTypeEnum {
     UPDATE("UPDATE","修改权限"),
     DELETE("DELETE","删除权限"),
     ALL("ALL","所有权限"),
-    QUERY("QUERY","查询权限")
+    QUERY("QUERY","查询权限"),
+    MUTE("MUTE","禁言权限"),
+    T("T","踢人权限"),
+    ANNOUNCEMENT("ANNOUNCEMENT","群公告操作权限"),
     ;
 
     @EnumValue

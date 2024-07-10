@@ -16,8 +16,12 @@ public enum CommandEnum {
     SHOOT_FINAL_MONEY("尾款"),
     PIXIV("随机pixiv图片"),
     EXIT("退出"),
-    GROUP_ADD("群添加"),
-    ERNIE_SPEED_128K("AI")
+    COMMAND_ADD("添加"),
+    COMMAND_DEL("删除"),
+    ERNIE_SPEED_128K("AI"),
+    MUTE("禁言"),
+    ANNOUNCEMENT("群公告"),
+    ROLE("权限")
 
     ;
 

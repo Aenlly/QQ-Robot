@@ -1,6 +1,7 @@
 package top.aenlly.qqrobot.controller.vo;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import top.aenlly.qqrobot.enmus.MatchTypeEnum;
 import top.aenlly.qqrobot.enmus.OptTypeEnum;
@@ -9,6 +10,7 @@ import top.aenlly.qqrobot.enmus.StatusEnum;
 import java.util.List;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 public class BotCommandAddVO extends BaseVO{
 

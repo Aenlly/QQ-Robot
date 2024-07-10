@@ -23,12 +23,11 @@ public class SysUserEntity extends BaseEntity {
     @TableField("qq")
     private Long qq;
 
-
     @TableField("tel")
     private String tel;
 
     /**
-     * 匹配类型
+     * 过期时间
      */
     @TableField("expired_time")
     private LocalDateTime expiredTime;

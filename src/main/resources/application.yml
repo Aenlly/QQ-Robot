@@ -2,7 +2,7 @@ spring:
   application:
     name: QQ-Robot
   profiles:
-    active: dev
+    active: prd
   main:
     allow-circular-references: true
   datasource:

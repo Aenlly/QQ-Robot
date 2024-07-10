@@ -34,7 +34,7 @@ public class CommandAdd extends AbstractCommand {
 
     @Override
     public String getName() {
-        return CommandEnum.GROUP_ADD.name();
+        return CommandEnum.COMMAND_ADD.name();
     }
 
     @Override
@@ -58,6 +58,7 @@ public class CommandAdd extends AbstractCommand {
         List<UserRoleEntity> userGroupEntities = userRoleMapper.queryUserRole(query, Arrays.asList(RoleTypeEnum.ALL, RoleTypeEnum.ADD));
 
         if (CollUtil.isEmpty(userGroupEntities)) {
+            sendPermission();
             return true;
         }
 
