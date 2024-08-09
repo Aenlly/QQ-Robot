@@ -72,12 +72,12 @@ public abstract class AbstractCommand implements Command {
 
     private void openContinuedCommand() {
         MessageSourceKind kind = event.getSource().getKind();
-        long id ;
+        String id ;
         if (kind == MessageSourceKind.GROUP) {
-            id = ((GroupMessageEvent) event).getGroup().getId();
+            id = String.valueOf(((GroupMessageEvent) event).getGroup().getId())+event.getSender().getId();
         }
         else if (kind == MessageSourceKind.FRIEND) {
-            id = ((FriendMessageEvent) event).getFriend().getId();
+            id = String.valueOf(((FriendMessageEvent) event).getFriend().getId());
         }else {
             return;
         }

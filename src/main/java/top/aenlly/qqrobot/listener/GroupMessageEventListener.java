@@ -60,7 +60,7 @@ public class GroupMessageEventListener extends SimpleListenerHost {
                 .content(stringPair.getValue())
                 .event(event);
 
-        CommandModeContext commandModeContext = GeneralContext.COMMAND_CACHE_MAP.get(MessageSourceKind.GROUP.name() + event.getSender().getId());
+        CommandModeContext commandModeContext = GeneralContext.COMMAND_CACHE_MAP.get(MessageSourceKind.GROUP.name() + event.getGroup().getId()+event.getSender().getId());
         // 判断是否进入了命令模式
         if(commandModeContext!=null){
             String content = MessageUtils.getMessageStr(event);
