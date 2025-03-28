@@ -14,6 +14,9 @@ import top.aenlly.qqrobot.utils.MessageUtils;
 
 import java.time.LocalDateTime;
 
+/**
+ * 命令，根据需要实现
+ */
 @Slf4j
 public abstract class AbstractCommand implements Command {
 
@@ -54,22 +57,39 @@ public abstract class AbstractCommand implements Command {
         }
     }
 
+    /**
+     * 群消息事件
+     *
+     * @param event
+     */
     protected void execute(GroupMessageEvent event) {}
 
-    ;
 
+    /**
+     * 好友消息事件
+     *
+     * @param event
+     */
     protected void execute(FriendMessageEvent event) {}
 
-    ;
 
+    /**
+     * 群临时会话事件
+     *
+     * @param event
+     */
     protected void execute(GroupTempMessageEvent event) {}
 
-    ;
-
+    /**
+     * 陌生人消息事件
+     * @param event
+     */
     protected void execute(StrangerMessageEvent event) {}
 
-    ;
 
+    /**
+     * 打开持续命令
+     */
     private void openContinuedCommand() {
         MessageSourceKind kind = event.getSource().getKind();
         String id ;
@@ -101,7 +121,7 @@ public abstract class AbstractCommand implements Command {
     }
 
     /**
-     * 关闭继续命令
+     * 关闭持续命令
      *
      * @return
      */
@@ -121,18 +141,33 @@ public abstract class AbstractCommand implements Command {
         subjectMsg("已关闭");
     }
 
+    /**
+     * 发送消息
+     * @param prefix
+     */
     private void subjectMsg(String prefix) {
         send(prefix + "【" + CommandEnum.valueOf(context.getCommand()).getMsg() + "】模式");
     }
 
+    /**
+     * 是否开启持续模式
+     * @return
+     */
     public boolean getOpenContinuedCommand() {
         return openContinuedCommand;
     }
 
+    /**
+     * 权限不足报错
+     */
     protected void sendPermission() {
         send(MsgCode.PERMISSIONS_MISSING.getMsg());
     }
 
+    /**
+     * 发送消息
+     * @param message
+     */
     protected void send(String message) {
         MessageUtils.senderQuoteReplyMessage(event, message);
     }
